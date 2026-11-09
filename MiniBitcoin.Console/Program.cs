@@ -28,33 +28,33 @@ while (true)
         switch (opcao)
         {
             case "1":
-                Console.WriteLine($"Cotação atual: {cotacao.PrecoBtcEmBrl.ToString("C", br)} por BTC");
+                Console.WriteLine($"Cotação atual: {Brl(cotacao.PrecoBtcEmBrl)} por BTC");
                 break;
             case "2":
                 cotacao.Atualizar(LerDecimal("Novo preço do BTC em BRL: "));
                 Console.WriteLine("Cotação atualizada.");
                 break;
             case "3":
-                Console.WriteLine($"Saldo BRL: {carteira.SaldoBrl.ToString("C", br)}");
+                Console.WriteLine($"Saldo BRL: {Brl(carteira.SaldoBrl)}");
                 Console.WriteLine($"Saldo BTC: {carteira.SaldoBtc.ToString("0.00000000", br)} ({carteira.SaldoSatoshis} sats)");
                 break;
             case "4":
                 var compra = corretora.Comprar(LerDecimal("Valor em BRL a investir: "));
                 extrato.Registrar(compra);
-                Console.WriteLine($"Compra realizada: {compra.Satoshis} satoshis por {compra.ValorBrl.ToString("C", br)}.");
+                Console.WriteLine($"Compra realizada: {compra.Satoshis} satoshis por {Brl(compra.ValorBrl)}.");
                 break;
             case "5":
                 var btc = LerDecimal("Quantidade de BTC a vender (ex.: 0,001): ");
                 var venda = corretora.Vender((long)(btc * Carteira.SatoshisPorBitcoin));
                 extrato.Registrar(venda);
-                Console.WriteLine($"Venda realizada: {venda.Satoshis} satoshis por {venda.ValorBrl.ToString("C", br)}.");
+                Console.WriteLine($"Venda realizada: {venda.Satoshis} satoshis por {Brl(venda.ValorBrl)}.");
                 break;
             case "6":
                 if (extrato.Transacoes.Count == 0)
                     Console.WriteLine("Nenhuma transação registrada.");
                 foreach (var t in extrato.Transacoes)
-                    Console.WriteLine($"{t.Data:dd/MM/yyyy HH:mm} | {t.Tipo,-6} | {t.Satoshis,12} sats | {t.ValorBrl.ToString("C", br),14} | cotação {t.PrecoBtc.ToString("C", br)}");
-                Console.WriteLine($"Patrimônio total: {Extrato.CalcularPatrimonio(carteira, cotacao).ToString("C", br)}");
+                    Console.WriteLine($"{t.Data:dd/MM/yyyy HH:mm} | {t.Tipo,-6} | {t.Satoshis,12} sats | {Brl(t.ValorBrl),14} | cotação {Brl(t.PrecoBtc)}");
+                Console.WriteLine($"Patrimônio total: {Brl(Extrato.CalcularPatrimonio(carteira, cotacao))}");
                 break;
             case "0":
             case null:
@@ -78,3 +78,5 @@ decimal LerDecimal(string mensagem)
         throw new FormatException("Valor inválido. Use vírgula para decimais (ex.: 150,50).");
     return valor;
 }
+
+string Brl(decimal valor) => valor.ToString("C", br);
